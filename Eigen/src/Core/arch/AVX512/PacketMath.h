@@ -620,13 +620,16 @@ template<> EIGEN_STRONG_INLINE Packet8d preverse(const Packet8d& a)
 template<> EIGEN_STRONG_INLINE Packet16f pabs(const Packet16f& a)
 {
   // _mm512_abs_ps intrinsic not found, so hack around it
-  return (__m512)_mm512_and_si512((__m512i)a, _mm512_set1_epi32(0x7fffffff));
+  return _mm512_cvtepi32_ps(_mm512_and_si512(_mm512_cvtps_epi32(a), _mm512_set1_epi32(0x7fffffff)));
+  // return (__m512)_mm512_and_si512((__m512i)a, _mm512_set1_epi32(0x7fffffff));
 }
 template <>
 EIGEN_STRONG_INLINE Packet8d pabs(const Packet8d& a) {
   // _mm512_abs_ps intrinsic not found, so hack around it
-  return (__m512d)_mm512_and_si512((__m512i)a,
-                                   _mm512_set1_epi64(0x7fffffffffffffff));
+  return _mm512_cvtepi64_pd(_mm512_and_si512(_mm512_cvtpd_epi64(a),
+            _mm512_set1_epi64(0x7fffffffffffffff)));
+  // return (__m512d)_mm512_and_si512((__m512i)a,
+  //                                 _mm512_set1_epi64(0x7fffffffffffffff));
 }
 
 #ifdef EIGEN_VECTORIZE_AVX512DQ
